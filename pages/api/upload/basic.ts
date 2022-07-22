@@ -15,7 +15,7 @@ const handler: NextApiHandler = (req, res) => {
 const POST: NextApiHandler = async (req, res) => {
   const body = await basicRequestSchema.parseAsync(req.body);
   const data = await basicConvert(body);
-  basicPublish(data);
+  await basicPublish(data);
   console.log("Basic publish: OK");
   res.send("OK");
 };
