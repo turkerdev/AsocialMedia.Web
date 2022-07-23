@@ -21,6 +21,7 @@ export class GoogleService {
         "https://www.googleapis.com/auth/youtube",
       ],
       access_type: "offline",
+      prompt: "consent",
     });
 
     return url;
