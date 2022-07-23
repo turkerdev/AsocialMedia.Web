@@ -1,5 +1,5 @@
 import { TShortsRequestSchema } from "../../schema/shortsRequest";
-import { findChannelById_YT } from "../../utils/db";
+import { DbService } from "../../services/db";
 import { TShortsSchema } from "./schema";
 
 type RequestChannels_YT = TShortsRequestSchema["destination"]["youtube"];
@@ -10,7 +10,8 @@ type Channel_YT = Channels_YT[number];
 
 type TPredicate = (c: RequestChannel_YT) => Promise<Channel_YT>;
 const predicate: TPredicate = async ({ id }) => {
-  const { access_token, refresh_token } = await findChannelById_YT(id);
+  const { access_token, refresh_token } =
+    await DbService.findYoutubeChannelById(id);
   return {
     access_token,
     refresh_token,

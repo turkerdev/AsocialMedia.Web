@@ -1,6 +1,6 @@
 import { TBasicSchema } from "../../publisher/basic/schema";
 import { TBasicRequestSchema } from "../../schema/basicRequest";
-import { findChannelById_YT } from "../../utils/db";
+import { DbService } from "../../services/db";
 
 type RequestChannels_YT = TBasicRequestSchema["destination"]["youtube"];
 type RequestChannel_YT = RequestChannels_YT[number];
@@ -10,7 +10,9 @@ type Channel_YT = Channels_YT[number];
 
 type TPredicate = (c: RequestChannel_YT) => Promise<Channel_YT>;
 const predicate: TPredicate = async ({ id }) => {
-  const { access_token, refresh_token } = await findChannelById_YT(id);
+  const { access_token, refresh_token } =
+    await DbService.findYoutubeChannelById(id);
+
   return {
     access_token,
     refresh_token,
