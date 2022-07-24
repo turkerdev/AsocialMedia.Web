@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@prisma/client": "^4.1.0",
+    "@twurple/api": "^5.1.7",
+    "@twurple/auth": "^5.1.7",
     "amqplib": "^0.10.0",
     "googleapis": "^105.0.0",
     "next": "12.2.3",
