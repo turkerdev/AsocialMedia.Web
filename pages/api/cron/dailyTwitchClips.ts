@@ -21,9 +21,16 @@ const POST: NextApiHandler = async (req, res) => {
   const client = CrawlerService.generateTwitchClient();
   const clips = await CrawlerService.getPopularDailyClips(client);
 
+  const assets: TCompilationRequestSchema["assets"] = clips.map((clip) => ({
+    url: clip.url,
+    metadata: {
+      credit: `twitch.tv/${clip.broadcasterDisplayName}`,
+    },
+  }));
+
   const body: TCompilationRequestSchema = {
     destination: { youtube: [{ id: "UCXi8H_e2HV9VVc7YE7J99xw" }] },
-    assets: [...clips.map((clip) => ({ url: clip.url }))],
+    assets,
   };
 
   const data = await compilationConvert(body);
