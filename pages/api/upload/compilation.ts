@@ -1,7 +1,6 @@
 import type { NextApiHandler } from "next";
-import { compilationConvert } from "../../../publisher/compilation/converter";
 import { compilationPublish } from "../../../publisher/compilation/publisher";
-import { compilationRequestSchema } from "../../../schema/compilationRequest";
+import { compilationSchema } from "../../../publisher/compilation/schema";
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -13,8 +12,7 @@ const handler: NextApiHandler = (req, res) => {
 };
 
 const POST: NextApiHandler = async (req, res) => {
-  const body = await compilationRequestSchema.parseAsync(req.body);
-  const data = await compilationConvert(body);
+  const data = await compilationSchema.parseAsync(req.body);
   await compilationPublish(data);
   console.log("Compilation publish: OK");
   res.send("OK");

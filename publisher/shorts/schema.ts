@@ -1,17 +1,11 @@
 import { z } from "zod";
+import { asset } from "../../object/asset";
+import { destination } from "../../object/destination";
 
 export const shortsSchema = z.object({
-  asset: z.object({
-    url: z.string().url(),
-  }),
-  destination: z.object({
-    youtube: z.array(
-      z.object({
-        access_token: z.string(),
-        refresh_token: z.string(),
-      })
-    ),
-  }),
+  asset,
+  destination,
 });
 
-export type TShortsSchema = z.infer<typeof shortsSchema>;
+export type ShortsInput = z.input<typeof shortsSchema>;
+export type ShortsOutput = z.output<typeof shortsSchema>;

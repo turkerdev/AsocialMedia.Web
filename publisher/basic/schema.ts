@@ -1,17 +1,11 @@
 import { z } from "zod";
+import { asset } from "../../object/asset";
+import { destination } from "../../object/destination";
 
 export const basicSchema = z.object({
-  asset: z.object({
-    url: z.string().url(),
-  }),
-  destination: z.object({
-    youtube: z.array(
-      z.object({
-        access_token: z.string(),
-        refresh_token: z.string(),
-      })
-    ),
-  }),
+  asset,
+  destination,
 });
 
-export type TBasicSchema = z.infer<typeof basicSchema>;
+export type BasicInput = z.input<typeof basicSchema>;
+export type BasicOutput = z.output<typeof basicSchema>;

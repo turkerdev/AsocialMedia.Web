@@ -1,7 +1,6 @@
 import type { NextApiHandler } from "next";
-import { shortsConvert } from "../../../publisher/shorts/converter";
 import { shortsPublish } from "../../../publisher/shorts/publisher";
-import { shortsRequestSchema } from "../../../schema/shortsRequest";
+import { shortsSchema } from "../../../publisher/shorts/schema";
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -13,8 +12,7 @@ const handler: NextApiHandler = (req, res) => {
 };
 
 const POST: NextApiHandler = async (req, res) => {
-  const body = await shortsRequestSchema.parseAsync(req.body);
-  const data = await shortsConvert(body);
+  const data = await shortsSchema.parseAsync(req.body);
   await shortsPublish(data);
   console.log("Shorts publish: OK");
   res.send("OK");

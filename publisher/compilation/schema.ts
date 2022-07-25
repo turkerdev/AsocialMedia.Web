@@ -1,24 +1,11 @@
 import { z } from "zod";
+import { asset } from "../../object/asset";
+import { destination } from "../../object/destination";
 
 export const compilationSchema = z.object({
-  assets: z.array(
-    z.object({
-      url: z.string().url(),
-      metadata: z
-        .object({
-          credit: z.string().optional(),
-        })
-        .optional(),
-    })
-  ),
-  destination: z.object({
-    youtube: z.array(
-      z.object({
-        access_token: z.string(),
-        refresh_token: z.string(),
-      })
-    ),
-  }),
+  assets: z.array(asset),
+  destination,
 });
 
-export type TCompilationSchema = z.infer<typeof compilationSchema>;
+export type CompilationInput = z.input<typeof compilationSchema>;
+export type CompilationOutput = z.output<typeof compilationSchema>;

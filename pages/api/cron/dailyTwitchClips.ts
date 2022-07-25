@@ -1,7 +1,10 @@
 import { NextApiHandler } from "next";
-import { compilationConvert } from "../../../publisher/compilation/converter";
+import { Asset } from "../../../object/asset";
 import { compilationPublish } from "../../../publisher/compilation/publisher";
-import { TCompilationRequestSchema } from "../../../schema/compilationRequest";
+import {
+  CompilationInput,
+  compilationSchema,
+} from "../../../publisher/compilation/schema";
 import { CrawlerService } from "../../../services/crawler";
 import { environment } from "../../../utils/environment";
 
@@ -21,19 +24,17 @@ const POST: NextApiHandler = async (req, res) => {
   const client = CrawlerService.generateTwitchClient();
   const clips = await CrawlerService.getPopularDailyClips(client);
 
-  const assets: TCompilationRequestSchema["assets"] = clips.map((clip) => ({
+  const assets: Asset[] = clips.map((clip) => ({
     url: clip.url,
-    metadata: {
-      credit: `twitch.tv/${clip.broadcasterDisplayName}`,
-    },
+    credit: `twitch.tv/${clip.broadcasterDisplayName}`,
   }));
 
-  const body: TCompilationRequestSchema = {
-    destination: { youtube: [{ id: "UCXi8H_e2HV9VVc7YE7J99xw" }] },
+  const body: CompilationInput = {
+    destination: { youtube: [{ account: "UCXi8H_e2HV9VVc7YE7J99xw" }] },
     assets,
   };
 
-  const data = await compilationConvert(body);
+  const data = await compilationSchema.parseAsync(body);
   await compilationPublish(data);
   console.log("CRON dailyTwitchClips: OK");
   res.send("OK");
