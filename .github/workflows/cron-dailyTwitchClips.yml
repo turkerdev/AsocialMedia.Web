@@ -1,0 +1,20 @@
+name: Cron - dailyTwitchClips
+
+on:
+  schedule:
+    # Runs “At 08:00.” (see https://crontab.guru)
+    - cron: "0 8 * * *"
+jobs:
+  cron-dailyTwitchClips:
+    env:
+      APP_URL: ${{ secrets.APP_URL }}
+      CRON_KEY: ${{ secrets.CRON_KEY }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: cURL request
+        if: ${{ env.APP_URL && env.CRON_KEY }}
+        run: |
+          curl ${{ secrets.APP_URL }}/api/cron/dailyTwitchClips \
+            -X POST \
+            -H 'Authorization: ${{ secrets.CRON_KEY }}' \
+            --fail
