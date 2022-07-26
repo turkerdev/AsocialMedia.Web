@@ -14,7 +14,7 @@ jobs:
       - name: cURL request
         if: ${{ env.APP_URL && env.CRON_KEY }}
         run: |
-          curl ${{ secrets.APP_URL }}/api/cron/dailyTwitchClips \
-            -X POST \
-            -H 'Authorization: ${{ secrets.CRON_KEY }}' \
-            --fail
+          curl --request POST \
+          --url ${{ secrets.APP_URL }}/api/cron/dailyTwitchClips \
+          --header 'Authorization: ${{ secrets.CRON_KEY }}' \
+          --fail
