@@ -17,6 +17,8 @@ model Account {
   platform_id   String
   access_token  String
   refresh_token String
+  name          String?
+  image         String?
 
   @@unique([platform, platform_id])
 }

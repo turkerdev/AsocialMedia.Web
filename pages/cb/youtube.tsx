@@ -15,9 +15,15 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const auth = GoogleService.generateClient();
   auth.setCredentials({ access_token, refresh_token });
 
-  const { id } = await YouTubeService.getChannelData(auth);
+  const { id, snippet } = await YouTubeService.getChannelData(auth);
 
-  await DbService.upsertYoutubeChannel(id, access_token, refresh_token);
+  await DbService.upsertYoutubeChannel(
+    id,
+    access_token,
+    refresh_token,
+    snippet.title,
+    snippet.thumbnails.default.url
+  );
 
   return { redirect: { destination: "/", permanent: false } };
 };
