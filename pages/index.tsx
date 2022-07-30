@@ -5,6 +5,7 @@ import { GoogleService } from "../services/google";
 
 type youtubeChannel = {
   id: string;
+  platform_id: string;
   name: string | null;
   photo: string | null;
 };
@@ -23,6 +24,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       youtubeUrl,
       youtubeChannels: allYoutubeChannels.map((channel) => ({
         id: channel.id,
+        platform_id: channel.platform_id,
         name: channel.name,
         photo: channel.image,
       })),
@@ -46,7 +48,7 @@ const Home: NextPage<Props> = (props) => {
         <div className="flex gap-3">
           {props.youtubeChannels.map((channel) => (
             <div
-              key={"yt_" + channel.id}
+              key={channel.id}
               className="inline-flex flex-col w-32 rounded shadow"
             >
               <Image
@@ -58,11 +60,13 @@ const Home: NextPage<Props> = (props) => {
               />
               <p className="text-center my-1">{channel.name}</p>
               <p
-                title={channel.id}
+                title={channel.platform_id}
                 className="text-sm px-1 truncate mt-auto"
-                onClick={() => navigator.clipboard.writeText(channel.id)}
+                onClick={() =>
+                  navigator.clipboard.writeText(channel.platform_id)
+                }
               >
-                {channel.id}
+                {channel.platform_id}
               </p>
             </div>
           ))}
