@@ -1,10 +1,10 @@
 name: Cron - dailyTwitchClips
 
 on:
-  workflow_dispatch:
   schedule:
     # Runs “At 12:00.” UTC (see https://crontab.guru)
     - cron: "0 12 * * *"
+
 jobs:
   cron-dailyTwitchClips:
     env:
@@ -17,5 +17,5 @@ jobs:
         run: |
           curl --request POST \
           --url ${{ secrets.APP_URL }}/api/cron/dailyTwitchClips \
-          --header 'authorization: ${{ secrets.CRON_KEY }}' \
+          --header 'Authorization: ${{ secrets.CRON_KEY }}' \
           --fail
