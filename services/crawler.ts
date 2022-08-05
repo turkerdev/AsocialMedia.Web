@@ -4,7 +4,8 @@ import { CategoryIds, GenerateTwitchClient } from "./twitch";
 export async function MostWatchedClips(
   categories: (keyof typeof CategoryIds)[],
   startDate: string,
-  endDate: string
+  endDate: string,
+  limit: number = 20
 ) {
   const uniqueCategories = [...new Set(categories)].map((x) => CategoryIds[x]);
 
@@ -14,7 +15,7 @@ export async function MostWatchedClips(
     client.clips.getClipsForGame(category, {
       startDate,
       endDate,
-      limit: 20,
+      limit,
     })
   );
 
