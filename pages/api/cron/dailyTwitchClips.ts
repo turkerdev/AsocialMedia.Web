@@ -6,7 +6,7 @@ import {
   compilationQueueName,
   compilationSchema,
 } from "../../../queues/compilation";
-import { CrawlerService } from "../../../services/crawler";
+import { MostWatchedClips } from "../../../services/crawler";
 import { PublishToQueue } from "../../../services/queue";
 import { environment } from "../../../utils/environment";
 
@@ -23,16 +23,23 @@ const POST: NextApiHandler = async (req, res) => {
   if (req.headers.authorization !== environment.CRON_KEY)
     return res.status(401).send("Not authorized");
 
-  const client = CrawlerService.generateTwitchClient();
-  const clips = await CrawlerService.getPopularDailyClips(client);
-
+  const now = moment().toISOString();
+  const yesterday = moment().subtract(1, "days").toISOString();
   const EPISODE = moment().diff("20220724", "days") + 1;
+
+  const clips = await MostWatchedClips(
+    ["APEX", "GTAV", "JC", "LOL", "TFT", "VALORANT"],
+    yesterday,
+    now
+  );
 
   const assets: TAsset[] = clips.map((clip) => ({
     url: clip.url,
     credit: `twitch.tv/${clip.broadcasterDisplayName}`,
   }));
-  const broadcasters = [...new Set(clips.map((x) => x.broadcasterDisplayName))];
+  const uniqueBroadcasters = [
+    ...new Set(clips.map((x) => x.broadcasterDisplayName)),
+  ];
   const title =
     `Daily Twitch Moments #${EPISODE} | ` +
     clips
@@ -50,7 +57,7 @@ const POST: NextApiHandler = async (req, res) => {
           account: "UCXi8H_e2HV9VVc7YE7J99xw",
           title,
           publish_at,
-          tags: ["twitch", "clips", "daily", "moments", ...broadcasters],
+          tags: ["twitch", "clips", "daily", "moments", ...uniqueBroadcasters],
         },
       ],
     },
