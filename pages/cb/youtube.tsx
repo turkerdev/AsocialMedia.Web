@@ -1,29 +1,21 @@
 import { GetServerSideProps, NextPage } from "next";
 import { z } from "zod";
-import { DbService } from "../../services/db";
-import { GoogleService } from "../../services/google";
-import { YouTubeService } from "../../services/youtube";
+import { UpsertYouTubeChannel } from "../../services/db";
+import {
+  ExchangeGoogleCode,
+  GenerateGoogleClient,
+} from "../../services/google";
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const schema = z.object({ code: z.string() });
   const { code } = await schema.parseAsync(query);
 
-  const { access_token, refresh_token } = await GoogleService.exchangeCode(
+  const { access_token, refresh_token } = await ExchangeGoogleCode(
+    GenerateGoogleClient(),
     code
   );
 
-  const auth = GoogleService.generateClient();
-  auth.setCredentials({ access_token, refresh_token });
-
-  const { id, snippet } = await YouTubeService.getChannelData(auth);
-
-  await DbService.upsertYoutubeChannel(
-    id,
-    access_token,
-    refresh_token,
-    snippet.title,
-    snippet.thumbnails.default.url
-  );
+  await UpsertYouTubeChannel(access_token, refresh_token);
 
   return { redirect: { destination: "/", permanent: false } };
 };

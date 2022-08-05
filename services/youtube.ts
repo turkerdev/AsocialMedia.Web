@@ -1,17 +1,17 @@
-import type { OAuth2Client } from "google-auth-library";
+import { OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
 import { z } from "zod";
 
-export class YouTubeService {
-  static async getChannelData(auth: OAuth2Client) {
-    const youtube = google.youtube({ version: "v3", auth });
+export async function GetYouTubeChannelData(auth: OAuth2Client) {
+  const service = google.youtube({ version: "v3", auth });
 
-    const { data } = await youtube.channels.list({
-      part: ["id", "snippet"],
-      mine: true,
-    });
+  const { data } = await service.channels.list({
+    part: ["id", "snippet"],
+    mine: true,
+  });
 
-    const schema = z.object({
+  const schema = z
+    .object({
       id: z.string(),
       snippet: z.object({
         title: z.string(),
@@ -21,9 +21,14 @@ export class YouTubeService {
           }),
         }),
       }),
+    })
+    .transform((val) => {
+      return {
+        id: val.id,
+        name: val.snippet.title,
+        image: val.snippet.thumbnails.default.url,
+      };
     });
 
-    const channel = await schema.parseAsync(data.items?.[0]);
-    return channel;
-  }
+  return await schema.parseAsync(data.items?.[0]);
 }

@@ -1,6 +1,6 @@
 import type { NextApiHandler } from "next";
-import { basicPublish } from "../../../publisher/basic/publisher";
-import { basicSchema } from "../../../publisher/basic/schema";
+import { basicQueueName, basicSchema } from "../../../queues/basic";
+import { PublishToQueue } from "../../../services/queue";
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -11,10 +11,8 @@ const handler: NextApiHandler = (req, res) => {
   }
 };
 
-const POST: NextApiHandler = async (req, res) => {
-  const data = await basicSchema.parseAsync(req.body);
-  await basicPublish(data);
-  console.log("Basic publish: OK");
+const POST: NextApiHandler = async ({ body }, res) => {
+  await PublishToQueue(basicQueueName, basicSchema, body);
   res.send("OK");
 };
 

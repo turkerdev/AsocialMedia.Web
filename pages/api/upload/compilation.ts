@@ -1,6 +1,9 @@
 import type { NextApiHandler } from "next";
-import { compilationPublish } from "../../../publisher/compilation/publisher";
-import { compilationSchema } from "../../../publisher/compilation/schema";
+import {
+  compilationQueueName,
+  compilationSchema,
+} from "../../../queues/compilation";
+import { PublishToQueue } from "../../../services/queue";
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -11,10 +14,8 @@ const handler: NextApiHandler = (req, res) => {
   }
 };
 
-const POST: NextApiHandler = async (req, res) => {
-  const data = await compilationSchema.parseAsync(req.body);
-  await compilationPublish(data);
-  console.log("Compilation publish: OK");
+const POST: NextApiHandler = async ({ body }, res) => {
+  await PublishToQueue(compilationQueueName, compilationSchema, body);
   res.send("OK");
 };
 

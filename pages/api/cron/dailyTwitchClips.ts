@@ -1,12 +1,13 @@
 import moment from "moment";
 import { NextApiHandler } from "next";
-import { Asset } from "../../../object/asset";
-import { compilationPublish } from "../../../publisher/compilation/publisher";
+import { z } from "zod";
+import { TAsset } from "../../../object/queue/asset";
 import {
-  CompilationInput,
+  compilationQueueName,
   compilationSchema,
-} from "../../../publisher/compilation/schema";
+} from "../../../queues/compilation";
 import { CrawlerService } from "../../../services/crawler";
+import { PublishToQueue } from "../../../services/queue";
 import { environment } from "../../../utils/environment";
 
 const handler: NextApiHandler = (req, res) => {
@@ -25,18 +26,17 @@ const POST: NextApiHandler = async (req, res) => {
   const client = CrawlerService.generateTwitchClient();
   const clips = await CrawlerService.getPopularDailyClips(client);
 
-  const assets: Asset[] = clips.map((clip) => ({
+  const assets: TAsset[] = clips.map((clip) => ({
     url: clip.url,
     credit: `twitch.tv/${clip.broadcasterDisplayName}`,
   }));
-
   const broadcasters = [...new Set(clips.map((x) => x.broadcasterDisplayName))];
   const title = clips
     .map((clip) => clip.title)
     .filter((title) => title.split(" ").length >= 5)[0];
   const publish_at = moment.utc().startOf("day").hour(13).toDate();
 
-  const body: CompilationInput = {
+  const body: z.input<typeof compilationSchema> = {
     assets,
     destination: {
       youtube: [
@@ -44,15 +44,13 @@ const POST: NextApiHandler = async (req, res) => {
           account: "UCXi8H_e2HV9VVc7YE7J99xw",
           title,
           publish_at,
-          tags: ["twitch", "clips", "daily", ...broadcasters],
+          tags: ["twitch", "clips", "daily", "moments", ...broadcasters],
         },
       ],
     },
   };
 
-  const data = await compilationSchema.parseAsync(body);
-  await compilationPublish(data);
-  console.log("CRON dailyTwitchClips: OK");
+  await PublishToQueue(compilationQueueName, compilationSchema, body);
   res.send("OK");
 };
 

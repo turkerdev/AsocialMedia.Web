@@ -1,6 +1,6 @@
 import type { NextApiHandler } from "next";
-import { shortsPublish } from "../../../publisher/shorts/publisher";
-import { shortsSchema } from "../../../publisher/shorts/schema";
+import { shortsQueueName, shortsSchema } from "../../../queues/shorts";
+import { PublishToQueue } from "../../../services/queue";
 
 const handler: NextApiHandler = (req, res) => {
   switch (req.method) {
@@ -11,10 +11,8 @@ const handler: NextApiHandler = (req, res) => {
   }
 };
 
-const POST: NextApiHandler = async (req, res) => {
-  const data = await shortsSchema.parseAsync(req.body);
-  await shortsPublish(data);
-  console.log("Shorts publish: OK");
+const POST: NextApiHandler = async ({ body }, res) => {
+  await PublishToQueue(shortsQueueName, shortsSchema, body);
   res.send("OK");
 };
 

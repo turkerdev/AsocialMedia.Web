@@ -1,11 +1,13 @@
 import { z } from "zod";
-import { DbService } from "../services/db";
+import { FindChannelById } from "../../../services/db";
 
-export const youtube = z
+export const YouTube = z
   .object({
     account: z.string().transform(async (id) => {
-      const { access_token, refresh_token } =
-        await DbService.findYoutubeChannelById(id);
+      const { access_token, refresh_token } = await FindChannelById(
+        "YouTube",
+        id
+      );
 
       return {
         access_token,
