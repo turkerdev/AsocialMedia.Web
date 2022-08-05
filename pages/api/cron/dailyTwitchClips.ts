@@ -26,14 +26,20 @@ const POST: NextApiHandler = async (req, res) => {
   const client = CrawlerService.generateTwitchClient();
   const clips = await CrawlerService.getPopularDailyClips(client);
 
+  const EPISODE = moment().diff("20220724", "days") + 1;
+
   const assets: TAsset[] = clips.map((clip) => ({
     url: clip.url,
     credit: `twitch.tv/${clip.broadcasterDisplayName}`,
   }));
   const broadcasters = [...new Set(clips.map((x) => x.broadcasterDisplayName))];
-  const title = clips
-    .map((clip) => clip.title)
-    .filter((title) => title.split(" ").length >= 5)[0];
+  const title =
+    `Daily Twitch Moments #${EPISODE} | ` +
+    clips
+      .map((clip) => clip.title)
+      .filter((title) => title.split(" ").length <= 5)
+      .sort((a, b) => b.length - a.length)
+      .at(0);
   const publish_at = moment.utc().startOf("day").hour(13).toDate();
 
   const body: z.input<typeof compilationSchema> = {
