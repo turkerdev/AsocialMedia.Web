@@ -60,6 +60,7 @@ const POST: NextApiHandler = async (req, res) => {
           title,
           publish_at,
           tags: ["twitch", "clips", "daily", "moments", ...uniqueBroadcasters],
+          category: "entertainment",
         },
       ],
     },

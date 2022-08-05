@@ -63,6 +63,7 @@ const POST: NextApiHandler = async (req, res) => {
             "moments",
             ...uniqueBroadcasters,
           ],
+          category: "gaming",
         },
       ],
     },
