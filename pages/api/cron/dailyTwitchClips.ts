@@ -57,10 +57,18 @@ const POST: NextApiHandler = async (req, res) => {
       youtube: [
         {
           account: "UCXi8H_e2HV9VVc7YE7J99xw",
-          title,
-          publish_at,
-          tags: ["twitch", "clips", "daily", "moments", ...uniqueBroadcasters],
-          category: "entertainment",
+          video: {
+            title,
+            publish_at,
+            tags: [
+              "twitch",
+              "clips",
+              "daily",
+              "moments",
+              ...uniqueBroadcasters,
+            ],
+            category: "entertainment",
+          },
         },
       ],
     },
