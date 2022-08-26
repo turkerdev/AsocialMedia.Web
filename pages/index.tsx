@@ -1,4 +1,5 @@
 import { GetStaticProps, NextPage } from "next";
+import Link from "next/link";
 import YouTubeCollection, {
   Props as YTCollectionProps,
 } from "../components/YouTubeCollection";
@@ -32,12 +33,11 @@ const Home: NextPage<Props> = (props) => {
       <div>
         <div className="flex gap-x-3 border-b border-neutral-600 mb-3 py-3">
           <p className="text-3xl">YouTube</p>
-          <a
-            href="/api/oauth/goyoutube"
-            className="bg-black rounded text-white self-center px-2 py-1"
-          >
-            New
-          </a>
+          <Link href="/api/oauth/goyoutube">
+            <a className="bg-black rounded text-white self-center px-2 py-1">
+              New
+            </a>
+          </Link>
         </div>
         <YouTubeCollection channels={props.youtubeChannels} />
       </div>
