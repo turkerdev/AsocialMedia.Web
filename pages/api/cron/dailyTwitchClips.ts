@@ -1,7 +1,8 @@
 import moment from "moment";
 import { NextApiHandler } from "next";
 import { z } from "zod";
-import { TAsset } from "../../../object/queue/asset";
+import { TAsset } from "../../../object/asset";
+import { categories } from "../../../object/queue/platform/youtube";
 import {
   compilationQueueName,
   compilationSchema,
@@ -67,7 +68,7 @@ const POST: NextApiHandler = async (req, res) => {
               "moments",
               ...uniqueBroadcasters,
             ],
-            category: "entertainment",
+            category: categories.entertainment,
           },
         },
       ],
